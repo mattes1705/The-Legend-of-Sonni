@@ -3,66 +3,60 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THE LEGEND OF SONNI</title>
+<title>SONNI RPG</title>
 
 <style>
-body {
+body{
   margin:0;
-  overflow:hidden;
-  font-family:monospace;
   background:black;
+  font-family:monospace;
 }
 
-/* MAP */
-#map {
+#map{
   position:relative;
   width:800px;
   height:500px;
   margin:auto;
   top:50%;
   transform:translateY(-50%);
-  background:#2e7d32;
   border:4px solid black;
+  background:#2e7d32;
 }
 
-/* TILE TYPES */
-.tile {
+/* TILE */
+.tile{
   position:absolute;
   width:40px;
   height:40px;
 }
 
-.grass { background:#43a047; }
-.path { background:#a1887f; }
-.water { background:#1976d2; }
-.tree { background:#1b5e20; }
+.grass{background:#43a047;}
+.path{background:#a1887f;}
+.tree{background:#1b5e20;}
 
 /* PLAYER */
-#player {
+#player{
   position:absolute;
   width:30px;
   height:30px;
   background:gold;
   border:2px solid black;
-  z-index:10;
 }
 
 /* NPC */
-.npc {
+.npc{
   position:absolute;
   width:30px;
   height:30px;
   border:2px solid black;
-  z-index:5;
 }
 
-#emma { background:#a1887f; }
-#tim { background:#90caf9; }
-#matte { background:#8d6e63; }
-#schmyt { background:#ce93d8; }
+#emma{background:#a1887f;}
+#tim{background:#90caf9;}
+#matte{background:#8d6e63;}
+#schmyt{background:#ce93d8;}
 
-/* UI */
-#dialog {
+#dialog{
   position:absolute;
   bottom:10px;
   left:10px;
@@ -72,93 +66,79 @@ body {
   padding:10px;
   display:none;
   white-space:pre-line;
-  z-index:20;
 }
 </style>
 </head>
 
 <body>
 
-<div id="map">
-
-<!-- TILES (simple Pokémon-style layout) -->
-<script>
-for(let y=0;y<12;y++){
-  for(let x=0;x<20;x++){
-
-    let div=document.createElement("div");
-    div.className="tile grass";
-    div.style.left=(x*40)+"px";
-    div.style.top=(y*40)+"px";
-
-    // PATH
-    if(y===5) div.className="tile path";
-
-    // TREES BORDER
-    if(x===0||y===0||x===19||y===11){
-      div.className="tile tree";
-    }
-
-    document.write(div.outerHTML);
-  }
-}
-</script>
-
-<!-- PLAYER -->
-<div id="player" style="left:80px;top:200px;"></div>
-
-<!-- NPCS -->
-<div id="emma" class="npc" style="left:320px;top:160px;"></div>
-<div id="tim" class="npc" style="left:200px;top:320px;"></div>
-<div id="matte" class="npc" style="left:120px;top:200px;"></div>
-<div id="schmyt" class="npc" style="left:520px;top:120px;"></div>
-
-</div>
-
+<div id="map"></div>
 <div id="dialog"></div>
 
 <script>
-
-let x=80,y=200;
-const player=document.getElementById("player");
+const map=document.getElementById("map");
 const dialog=document.getElementById("dialog");
 
+let player={x:80,y:200};
+
+function drawTile(x,y,type){
+  const t=document.createElement("div");
+  t.className="tile "+type;
+  t.style.left=x+"px";
+  t.style.top=y+"px";
+  map.appendChild(t);
+}
+
+/* MAP BUILD */
+for(let y=0;y<12;y++){
+  for(let x=0;x<20;x++){
+
+    let type="grass";
+
+    if(y===5) type="path";
+    if(x===0||y===0||x===19||y===11) type="tree";
+
+    drawTile(x*40,y*40,type);
+  }
+}
+
+/* NPCS */
+function npc(x,y,id,color){
+  const d=document.createElement("div");
+  d.className="npc";
+  d.style.left=x+"px";
+  d.style.top=y+"px";
+  d.style.background=color;
+  d.id=id;
+  map.appendChild(d);
+}
+
+npc(320,160,"emma","#a1887f");
+npc(200,320,"tim","#90caf9");
+npc(120,200,"matte","#8d6e63");
+npc(520,120,"schmyt","#ce93d8");
+
+/* PLAYER */
+const p=document.createElement("div");
+p.id="player";
+map.appendChild(p);
+
 function render(){
-  player.style.left=x+"px";
-  player.style.top=y+"px";
+  p.style.left=player.x+"px";
+  p.style.top=player.y+"px";
 }
 render();
 
-/* COLLISION (trees) */
-function blocked(nx,ny){
-  const tiles=document.getElementsByClassName("tile");
-  for(let t of tiles){
-    let tx=parseInt(t.style.left);
-    let ty=parseInt(t.style.top);
-
-    if(t.classList.contains("tree")){
-      if(Math.abs(nx-tx)<30 && Math.abs(ny-ty)<30){
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
+/* MOVE */
 function move(dx,dy){
-  let nx=x+dx;
-  let ny=y+dy;
-
-  if(!blocked(nx,ny)){
-    x=nx;y=ny;
-  }
-
+  player.x+=dx;
+  player.y+=dy;
   render();
 }
 
-/* INTERACTION */
-function near(px,py,tx,ty){
-  return Math.abs(px-tx)<40 && Math.abs(py-ty)<40;
+/* INTERACT */
+function near(ax,ay,bx,by){
+  return Math.abs(ax-bx)<40 && Math.abs(ay-by)<40;
 }
 
 function show(t){
@@ -168,23 +148,23 @@ function show(t){
 
 function interact(){
 
-  if(near(x,y,320,160)){
-    show("Emma:\n\nIch habe meine Sporttasche verloren...");
+  if(near(player.x,player.y,320,160)){
+    show("Emma:\nIch habe meine Sporttasche verloren...");
     return;
   }
 
-  if(near(x,y,200,320)){
-    show("Tim:\n\nDubai ist schön, aber Dubai mir Baby ist viel schöner");
+  if(near(player.x,player.y,200,320)){
+    show("Tim:\nDubai ist schön, aber Dubai mir Baby ist viel schöner");
     return;
   }
 
-  if(near(x,y,120,200)){
-    show("Mattes:\n\nMore Espresso,\nless Depresso");
+  if(near(player.x,player.y,120,200)){
+    show("Mattes:\nMore Espresso, less Depresso");
     return;
   }
 
-  if(near(x,y,520,120)){
-    show("Schmyt:\n\nIch zertret grad nur paar Tulpen im Park");
+  if(near(player.x,player.y,520,120)){
+    show("Schmyt:\nIch zertret grad nur paar Tulpen im Park");
     return;
   }
 
@@ -199,7 +179,6 @@ document.addEventListener("keydown",(e)=>{
   if(e.key==="ArrowRight")move(10,0);
   if(e.key===" ")interact();
 });
-
 </script>
 
 </body>
