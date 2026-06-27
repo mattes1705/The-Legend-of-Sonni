@@ -7,639 +7,53 @@
 
 <style>
 body {
-  margin: 0;
-  background: #1a1a1a;
-  font-family: monospace;
-  overflow: hidden;
-  touch-action: none;
+  margin:0;
+  overflow:hidden;
+  font-family:monospace;
+  background:black;
 }
 
-#game {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background: #2f6b2f;
-}
-
-/* PLAYER */
-.player {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  background: yellow;
-  border: 2px solid black;
-  border-radius: 4px;
-}
-
-/* NPC */
-.npc {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  background: #ff6666;
-  border: 2px solid black;
-}
-
-/* DIALOG */
-#dialog {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 120px;
-  background: white;
-  border-top: 4px solid black;
-  padding: 10px;
-  display: none;
-  font-size: 16px;
-}
-
-/* MOBILE CONTROLS */
-#controls {
-  position: absolute;
-  bottom: 140px;
-  left: 10px;
-}
-
-.btn {
-  width: 60px;
-  height: 60px;
-  margin: 5px;
-  background: white;
-  border: 2px solid black;
-  font-size: 20px;
-}
-</style>
-</head>
-
-<body>
-
-<div id="game">
-  <div id="player" class="player"></div>
-
-  <div id="npc" class="npc" style="left:200px;top:200px;"></div>
-
-  <div id="dialog"></div>
-
-  <div id="controls">
-    <button class="btn" onclick="move('up')">⬆️</button><br>
-    <button class="btn" onclick="move('left')">⬅️</button>
-    <button class="btn" onclick="move('down')">⬇️</button>
-    <button class="btn" onclick="move('right')">➡️</button><br>
-    <button class="btn" onclick="interact()">A</button>
-  </div>
-</div>
-
-<script>
-const player = document.getElementById("player");
-const npc = document.getElementById("npc");
-const dialog = document.getElementById("dialog");
-
-let x = 50;
-let y = 50;
-
-function render() {
-  player.style.left = x + "px";
-  player.style.top = y + "px";
-}
-render();
-
-function move(dir) {
-  const speed = 10;
-
-  if (dir === "up") y -= speed;
-  if (dir === "down") y += speed;
-  if (dir === "left") x -= speed;
-  if (dir === "right") x += speed;
-
-  render();
-}
-
-function interact() {
-  const px = x;
-  const py = y;
-  const nx = parseInt(npc.style.left);
-  const ny = parseInt(npc.style.top);
-
-  const dist = Math.abs(px - nx) + Math.abs(py - ny);
-
-  if (dist < 60) {
-    dialog.style.display = "block";
-    dialog.innerText =
-      "Professor Rizz:\n\nSaria...\nDie Zeit ist gekommen.\nFinde die 4 Fragmente des Zauberspruchs.";
-  } else {
-    dialog.style.display = "block";
-    dialog.innerText = "Niemand ist hier...";
-  }
-}
-
-// Keyboard support
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowUp") move("up");
-  if (e.key === "ArrowDown") move("down");
-  if (e.key === "ArrowLeft") move("left");
-  if (e.key === "ArrowRight") move("right");
-  if (e.key === " ") interact();
-});
-</script>
-
-</body>
-</html>
-<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THE LEGEND OF SONNI</title>
-
-<style>
-body {
-  margin: 0;
-  overflow: hidden;
-  font-family: monospace;
-  background: black;
-  touch-action: none;
-}
-
-/* GAME AREA */
-#game {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background: #2e7d32;
-}
-
-/* TILE WALLS */
-.wall {
-  position: absolute;
-  background: #1b5e20;
-}
-
-/* PLAYER */
-#player {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  background: gold;
-  border: 2px solid black;
-  border-radius: 4px;
-  z-index: 10;
-}
-
-/* NPCS */
-.npc {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border: 2px solid black;
-  z-index: 5;
-}
-
-#emma { background: #a1887f; }
-#tim { background: #90caf9; }
-#matte { background: #8d6e63; }
-#schmyt { background: #ce93d8; }
-
-/* ITEM */
-.item {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: #4fc3f7;
-  border: 2px solid black;
-  z-index: 4;
-}
-
-/* UI */
-#dialog {
-  position: absolute;
-  bottom: 120px;
-  left: 10px;
-  right: 10px;
-  background: white;
-  border: 3px solid black;
-  padding: 10px;
-  display: none;
-  z-index: 20;
-  white-space: pre-line;
-}
-
-#inventory {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: white;
-  border: 2px solid black;
-  padding: 6px;
-  font-size: 12px;
-  z-index: 20;
-}
-
-/* CONTROLS */
-#controls {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  z-index: 30;
-}
-
-.btn {
-  width: 55px;
-  height: 55px;
-  margin: 3px;
-  font-size: 18px;
-}
-</style>
-</head>
-
-<body>
-
-<div id="game">
-
-  <div id="player"></div>
-
-  <!-- NPCs -->
-  <div id="emma" class="npc" style="left:220px;top:180px;"></div>
-  <div id="tim" class="npc" style="left:120px;top:320px;"></div>
-  <div id="matte" class="npc" style="left:300px;top:350px;"></div>
-  <div id="schmyt" class="npc" style="left:420px;top:250px;"></div>
-
-  <!-- ITEM -->
-  <div id="bag" class="item" style="left:250px;top:220px;"></div>
-
-  <!-- WALLS -->
-  <div class="wall" style="left:0;top:0;width:100%;height:20px;"></div>
-  <div class="wall" style="left:0;top:0;width:20px;height:100%;"></div>
-  <div class="wall" style="left:0;bottom:0;width:100%;height:20px;"></div>
-  <div class="wall" style="right:0;top:0;width:20px;height:100%;"></div>
-
-  <div id="dialog"></div>
-
-  <div id="inventory">
-    🎒 Inventar:<br>
-    <span id="invText">leer</span>
-  </div>
-
-  <div id="controls">
-    <button class="btn" onclick="move(0,-10)">⬆️</button><br>
-    <button class="btn" onclick="move(-10,0)">⬅️</button>
-    <button class="btn" onclick="move(0,10)">⬇️</button>
-    <button class="btn" onclick="move(10,0)">➡️</button><br>
-    <button class="btn" onclick="interact()">A</button>
-  </div>
-
-</div>
-
-<script>
-const player = document.getElementById("player");
-const dialog = document.getElementById("dialog");
-const invText = document.getElementById("invText");
-const bag = document.getElementById("bag");
-
-let x = 50, y = 50;
-
-let inventory = [];
-
-function render() {
-  player.style.left = x + "px";
-  player.style.top = y + "px";
-}
-render();
-
-function move(dx, dy) {
-  x += dx;
-  y += dy;
-  render();
-}
-
-function show(text) {
-  dialog.style.display = "block";
-  dialog.innerText = text;
-}
-
-function hide() {
-  dialog.style.display = "none";
-}
-
-function addItem(item) {
-  inventory.push(item);
-  invText.innerHTML = inventory.join("<br>");
-}
-
-/* COLLISION CHECK */
-function near(a, b, dist=40) {
-  const ax = a.x, ay = a.y;
-  const bx = b.x, by = b.y;
-  return Math.abs(ax-bx) < dist && Math.abs(ay-by) < dist;
-}
-
-function interact() {
-
-  const px = x;
-  const py = y;
-
-  // EMMA
-  const emma = {x:220,y:180};
-  if (near({x:px,y:py}, emma)) {
-    if (inventory.includes("🎒 Sporttasche")) {
-      show("Emma:\n\nDanke!");
-      inventory = inventory.filter(i => i !== "🎒 Sporttasche");
-      invText.innerHTML = inventory.join("<br>");
-    } else {
-      show("Emma:\n\nIch habe meine Sporttasche verloren...");
-    }
-    return;
-  }
-
-  // TIM
-  const tim = {x:120,y:320};
-  if (near({x:px,y:py}, tim)) {
-    show("Tim:\n\nDubai ist schön, aber Dubai mir Baby ist viel schöner");
-    return;
-  }
-
-  // MATTES
-  const matte = {x:300,y:350};
-  if (near({x:px,y:py}, matte)) {
-    show("Mattes:\n\nMore Espresso,\nless Depresso");
-    return;
-  }
-
-  // SCHMYT
-  const schmyt = {x:420,y:250};
-  if (near({x:px,y:py}, schmyt)) {
-    show("Schmyt:\n\nIch zertret grad nur paar Tulpen im Park");
-    return;
-  }
-
-  // ITEM BAG
-  const bx = 250, by = 220;
-  if (Math.abs(px-bx)<30 && Math.abs(py-by)<30) {
-    if (!inventory.includes("🎒 Sporttasche")) {
-      addItem("🎒 Sporttasche");
-      bag.style.display = "none";
-      show("Du hast eine Sporttasche gefunden!");
-    }
-    return;
-  }
-
-  show("Niemand ist hier...");
-}
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowUp") move(0,-10);
-  if (e.key === "ArrowDown") move(0,10);
-  if (e.key === "ArrowLeft") move(-10,0);
-  if (e.key === "ArrowRight") move(10,0);
-  if (e.key === " ") interact();
-});
-</script>
-
-</body>
-</html>
-
-<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THE LEGEND OF SONNI</title>
-
-<style>
-body {
-  margin: 0;
-  overflow: hidden;
-  font-family: monospace;
-  background: black;
-  touch-action: none;
-}
-
-#game {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background: #2e7d32;
-}
-
-/* PLAYER */
-#player {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  background: gold;
-  border: 2px solid black;
-  border-radius: 4px;
-  z-index: 10;
-}
-
-/* NPC */
-.npc {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border: 2px solid black;
-}
-
-#emma { background: #a1887f; }
-#tim { background: #90caf9; }
-#matte { background: #8d6e63; }
-#schmyt { background: #ce93d8; }
-
-/* AREAS */
-.area {
-  position: absolute;
-  font-size: 10px;
-  color: white;
-  opacity: 0.7;
-}
-
-/* UI */
-#dialog {
-  position: absolute;
-  bottom: 120px;
-  left: 10px;
-  right: 10px;
-  background: white;
-  border: 3px solid black;
-  padding: 10px;
-  display: none;
-  z-index: 20;
-  white-space: pre-line;
-}
-
-#inventory {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: white;
-  border: 2px solid black;
-  padding: 6px;
-  font-size: 12px;
-  z-index: 20;
-}
-
-#controls {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  z-index: 30;
-}
-
-.btn {
-  width: 55px;
-  height: 55px;
-  margin: 3px;
-}
-</style>
-</head>
-
-<body>
-
-<div id="game">
-
-<div id="player"></div>
-
-<!-- AREAS -->
-<div class="area" style="left:40px;top:40px;">START</div>
-<div class="area" style="left:200px;top:150px;">ROUTE 1</div>
-<div class="area" style="left:350px;top:250px;">MINE</div>
-<div class="area" style="left:150px;top:350px;">FIELD</div>
-<div class="area" style="left:420px;top:120px;">TEMPEL</div>
-
-<!-- NPCs -->
-<div id="emma" class="npc" style="left:200px;top:180px;"></div>
-<div id="tim" class="npc" style="left:120px;top:300px;"></div>
-<div id="matte" class="npc" style="left:300px;top:340px;"></div>
-<div id="schmyt" class="npc" style="left:420px;top:220px;"></div>
-
-<div id="dialog"></div>
-
-<div id="inventory">
-🎒 Inventar:<br>
-<div id="invText">leer</div>
-</div>
-
-<div id="controls">
-<button class="btn" onclick="move(0,-10)">⬆️</button><br>
-<button class="btn" onclick="move(-10,0)">⬅️</button>
-<button class="btn" onclick="move(0,10)">⬇️</button>
-<button class="btn" onclick="move(10,0)">➡️</button><br>
-<button class="btn" onclick="interact()">A</button>
-</div>
-
-</div>
-
-<script>
-
-let x = 50, y = 50;
-let inventory = [];
-
-const player = document.getElementById("player");
-const dialog = document.getElementById("dialog");
-const invText = document.getElementById("invText");
-
-function render(){
-  player.style.left = x+"px";
-  player.style.top = y+"px";
-}
-render();
-
-function move(dx,dy){
-  x += dx;
-  y += dy;
-  render();
-}
-
-function show(t){
-  dialog.style.display = "block";
-  dialog.innerText = t;
-}
-
-function addItem(i){
-  inventory.push(i);
-  invText.innerHTML = inventory.join("<br>");
-}
-
-/* DISTANCE */
-function near(px,py,tx,ty){
-  return Math.abs(px-tx)<40 && Math.abs(py-ty)<40;
-}
-
-function interact(){
-
-  // EMMA
-  if(near(x,y,200,180)){
-    if(inventory.includes("🎒 Sporttasche")){
-      show("Emma:\n\nDanke!");
-    } else {
-      show("Emma:\n\nIch habe meine Sporttasche verloren...");
-    }
-    return;
-  }
-
-  // TIM
-  if(near(x,y,120,300)){
-    show("Tim:\n\nDubai ist schön, aber Dubai mir Baby ist viel schöner");
-    return;
-  }
-
-  // MATTES
-  if(near(x,y,300,340)){
-    show("Mattes:\n\nMore Espresso,\nless Depresso");
-    return;
-  }
-
-  // SCHMYT
-  if(near(x,y,420,220)){
-    show("Schmyt:\n\nIch zertret grad nur paar Tulpen im Park");
-    return;
-  }
-
-  show("Niemand ist hier...");
-}
-
-/* CONTROLS */
-document.addEventListener("keydown",(e)=>{
-  if(e.key==="ArrowUp") move(0,-10);
-  if(e.key==="ArrowDown") move(0,10);
-  if(e.key==="ArrowLeft") move(-10,0);
-  if(e.key==="ArrowRight") move(10,0);
-  if(e.key===" ") interact();
-});
-
-</script>
-
-</body>
-</html>
-
-<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THE LEGEND OF SONNI</title>
-
-<style>
-body { margin:0; overflow:hidden; font-family:monospace; background:black; }
-
-#game {
+/* MAP */
+#map {
   position:relative;
-  width:100vw;
-  height:100vh;
+  width:800px;
+  height:500px;
+  margin:auto;
+  top:50%;
+  transform:translateY(-50%);
   background:#2e7d32;
+  border:4px solid black;
 }
 
+/* TILE TYPES */
+.tile {
+  position:absolute;
+  width:40px;
+  height:40px;
+}
+
+.grass { background:#43a047; }
+.path { background:#a1887f; }
+.water { background:#1976d2; }
+.tree { background:#1b5e20; }
+
+/* PLAYER */
 #player {
   position:absolute;
-  width:28px;height:28px;
+  width:30px;
+  height:30px;
   background:gold;
   border:2px solid black;
+  z-index:10;
 }
 
+/* NPC */
 .npc {
   position:absolute;
-  width:28px;height:28px;
+  width:30px;
+  height:30px;
   border:2px solid black;
+  z-index:5;
 }
 
 #emma { background:#a1887f; }
@@ -647,75 +61,67 @@ body { margin:0; overflow:hidden; font-family:monospace; background:black; }
 #matte { background:#8d6e63; }
 #schmyt { background:#ce93d8; }
 
+/* UI */
 #dialog {
   position:absolute;
-  bottom:120px;
-  left:10px;right:10px;
+  bottom:10px;
+  left:10px;
+  right:10px;
   background:white;
   border:3px solid black;
   padding:10px;
   display:none;
-  z-index:10;
   white-space:pre-line;
-}
-
-#inventory {
-  position:absolute;
-  top:10px;left:10px;
-  background:white;
-  border:2px solid black;
-  padding:6px;
-  font-size:12px;
-}
-
-.btn {
-  width:55px;height:55px;
-}
-#controls {
-  position:absolute;
-  bottom:10px;left:10px;
+  z-index:20;
 }
 </style>
 </head>
 
 <body>
 
-<div id="game">
+<div id="map">
 
-<div id="player"></div>
+<!-- TILES (simple Pokémon-style layout) -->
+<script>
+for(let y=0;y<12;y++){
+  for(let x=0;x<20;x++){
 
-<div id="emma" class="npc" style="left:220px;top:180px;"></div>
-<div id="tim" class="npc" style="left:120px;top:300px;"></div>
-<div id="matte" class="npc" style="left:300px;top:340px;"></div>
-<div id="schmyt" class="npc" style="left:420px;top:220px;"></div>
+    let div=document.createElement("div");
+    div.className="tile grass";
+    div.style.left=(x*40)+"px";
+    div.style.top=(y*40)+"px";
+
+    // PATH
+    if(y===5) div.className="tile path";
+
+    // TREES BORDER
+    if(x===0||y===0||x===19||y===11){
+      div.className="tile tree";
+    }
+
+    document.write(div.outerHTML);
+  }
+}
+</script>
+
+<!-- PLAYER -->
+<div id="player" style="left:80px;top:200px;"></div>
+
+<!-- NPCS -->
+<div id="emma" class="npc" style="left:320px;top:160px;"></div>
+<div id="tim" class="npc" style="left:200px;top:320px;"></div>
+<div id="matte" class="npc" style="left:120px;top:200px;"></div>
+<div id="schmyt" class="npc" style="left:520px;top:120px;"></div>
+
+</div>
 
 <div id="dialog"></div>
 
-<div id="inventory">
-🎒 INVENTAR:<br>
-<div id="inv"></div>
-</div>
-
-<div id="controls">
-<button onclick="move(0,-10)">⬆️</button><br>
-<button onclick="move(-10,0)">⬅️</button>
-<button onclick="move(0,10)">⬇️</button>
-<button onclick="move(10,0)">➡️</button><br>
-<button onclick="interact()">A</button>
-</div>
-
-</div>
-
 <script>
 
-let x=50,y=50;
-
-let inventory = [];
-let bagTaken = false;
-
+let x=80,y=200;
 const player=document.getElementById("player");
 const dialog=document.getElementById("dialog");
-const inv=document.getElementById("inv");
 
 function render(){
   player.style.left=x+"px";
@@ -723,392 +129,69 @@ function render(){
 }
 render();
 
+/* COLLISION (trees) */
+function blocked(nx,ny){
+  const tiles=document.getElementsByClassName("tile");
+  for(let t of tiles){
+    let tx=parseInt(t.style.left);
+    let ty=parseInt(t.style.top);
+
+    if(t.classList.contains("tree")){
+      if(Math.abs(nx-tx)<30 && Math.abs(ny-ty)<30){
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 function move(dx,dy){
-  x+=dx;y+=dy;
+  let nx=x+dx;
+  let ny=y+dy;
+
+  if(!blocked(nx,ny)){
+    x=nx;y=ny;
+  }
+
   render();
 }
 
-function show(t){
-  dialog.style.display="block";
-  dialog.innerText=t;
-}
-
-function updateInv(){
-  inv.innerHTML = inventory.join("<br>");
-}
-
-/* QUEST LOGIC */
-function addFragment(f){
-  if(!inventory.includes(f)){
-    inventory.push(f);
-    updateInv();
-  }
-}
-
+/* INTERACTION */
 function near(px,py,tx,ty){
   return Math.abs(px-tx)<40 && Math.abs(py-ty)<40;
 }
 
-function interact(){
-
-  // EMMA
-  if(near(x,y,220,180)){
-    if(!bagTaken){
-      show("Emma:\n\nIch habe meine Sporttasche verloren...");
-    } else {
-      show("Emma:\n\nDanke!");
-      addFragment("✔ SPORTTASCHE ABGEGEBEN");
-    }
-    return;
-  }
-
-  // BAG QUEST ITEM
-  if(near(x,y,250,220) && !bagTaken){
-    bagTaken = true;
-    show("Du hast die Sporttasche gefunden!");
-    addFragment("🎒 SPORTTASCHE");
-    return;
-  }
-
-  // TIM
-  if(near(x,y,120,300)){
-    show("Tim:\n\nDubai ist schön, aber Dubai mir Baby ist viel schöner");
-    return;
-  }
-
-  // MATTES
-  if(near(x,y,300,340)){
-    show("Mattes:\n\nMore Espresso,\nless Depresso");
-    return;
-  }
-
-  // SCHMYT
-  if(near(x,y,420,220)){
-    show("Schmyt:\n\nIch zertret grad nur paar Tulpen im Park");
-    return;
-  }
-
-  // PROGRESS CHECK (FAKE FRAGMENTS TRIGGER)
-  if(inventory.includes("✔ SPORTTASCHE ABGEGEBEN")){
-    if(!inventory.includes("ENTEN")) addFragment("ENTEN");
-    else if(!inventory.includes("SCHWIMMEN")) addFragment("SCHWIMMEN");
-    else if(!inventory.includes("AM BESTEN")) addFragment("AM BESTEN");
-    else if(!inventory.includes("OBEN")) addFragment("OBEN");
-  }
-
-  show("Niemand ist hier...");
-}
-
-/* CONTROLS */
-document.addEventListener("keydown",(e)=>{
-  if(e.key==="ArrowUp")move(0,-10);
-  if(e.key==="ArrowDown")move(0,10);
-  if(e.key==="ArrowLeft")move(-10,0);
-  if(e.key==="ArrowRight")move(10,0);
-  if(e.key===" ")interact();
-});
-
-</script>
-
-</body>
-</html>
-
-<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THE LEGEND OF SONNI</title>
-
-<style>
-body { margin:0; overflow:hidden; font-family:monospace; background:black; }
-
-#game {
-  position:relative;
-  width:100vw;
-  height:100vh;
-  background:#2e7d32;
-}
-
-#player {
-  position:absolute;
-  width:28px;height:28px;
-  background:gold;
-  border:2px solid black;
-}
-
-.npc {
-  position:absolute;
-  width:28px;height:28px;
-  border:2px solid black;
-}
-
-#emma { background:#a1887f; }
-#tim { background:#90caf9; }
-#matte { background:#8d6e63; }
-#schmyt { background:#ce93d8; }
-
-#dialog {
-  position:absolute;
-  bottom:120px;
-  left:10px;right:10px;
-  background:white;
-  border:3px solid black;
-  padding:10px;
-  display:none;
-  z-index:10;
-  white-space:pre-line;
-}
-
-#ui {
-  position:absolute;
-  top:10px;left:10px;
-  background:white;
-  padding:6px;
-  border:2px solid black;
-  font-size:12px;
-}
-
-button { width:60px;height:50px; }
-#controls { position:absolute; bottom:10px; left:10px; }
-#minigame {
-  position:absolute;
-  top:0;left:0;right:0;bottom:0;
-  background:white;
-  display:none;
-  z-index:100;
-  padding:20px;
-}
-</style>
-</head>
-
-<body>
-
-<div id="game">
-
-<div id="player"></div>
-
-<div id="emma" class="npc" style="left:220px;top:180px;"></div>
-<div id="tim" class="npc" style="left:120px;top:300px;"></div>
-<div id="matte" class="npc" style="left:300px;top:340px;"></div>
-<div id="schmyt" class="npc" style="left:420px;top:220px;"></div>
-
-<div id="dialog"></div>
-
-<div id="ui">
-Fragments:<br>
-<div id="inv"></div>
-</div>
-
-<div id="controls">
-<button onclick="move(0,-10)">⬆️</button><br>
-<button onclick="move(-10,0)">⬅️</button>
-<button onclick="move(0,10)">⬇️</button>
-<button onclick="move(10,0)">➡️</button><br>
-<button onclick="interact()">A</button>
-</div>
-
-</div>
-
-<!-- MINIGAME SCREEN -->
-<div id="minigame"></div>
-
-<script>
-
-let x=50,y=50;
-const inv=[];
-const frag=["ENTEN","SCHWIMMEN","AM BESTEN","OBEN"];
-
-const player=document.getElementById("player");
-const dialog=document.getElementById("dialog");
-const invUI=document.getElementById("inv");
-const minigame=document.getElementById("minigame");
-
-function render(){
-  player.style.left=x+"px";
-  player.style.top=y+"px";
-}
-render();
-
-function move(dx,dy){ x+=dx;y+=dy;render(); }
-
 function show(t){
   dialog.style.display="block";
   dialog.innerText=t;
 }
 
-function add(f){
-  if(!inv.includes(f)){
-    inv.push(f);
-    invUI.innerHTML=inv.join("<br>");
-  }
-}
-
-/* DIST */
-function near(tx,ty){
-  return Math.abs(x-tx)<40 && Math.abs(y-ty)<40;
-}
-
-/* MINIGAMES */
-function openMinigame(type){
-
-  minigame.style.display="block";
-
-  if(type==="mine"){
-    minigame.innerHTML=`
-      <h2>⛏️ Mine</h2>
-      <p>Klicke 5x auf "graben"</p>
-      <button onclick="mine()">graben</button>
-      <p id="mcount">0/5</p>
-    `;
-    window.mineCount=0;
-  }
-
-  if(type==="field"){
-    minigame.innerHTML=`
-      <h2>🌾 Feld</h2>
-      <p>Klicke 5x schnell auf ernten</p>
-      <button onclick="farm()">ernten</button>
-      <p id="fcount">0/5</p>
-    `;
-    window.farmCount=0;
-  }
-
-  if(type==="dice"){
-    const roll=Math.floor(Math.random()*20)+1;
-    let res = roll>=15 ? "AM BESTEN" : "fail";
-
-    minigame.innerHTML=`
-      <h2>🎲 W20</h2>
-      <p>Du würfelst: ${roll}</p>
-      <button onclick="closeMG('${res}')">weiter</button>
-    `;
-  }
-}
-
-function mine(){
-  window.mineCount++;
-  document.getElementById("mcount").innerText=window.mineCount+"/5";
-  if(window.mineCount>=5) closeMG("ENTEN");
-}
-
-function farm(){
-  window.farmCount++;
-  document.getElementById("fcount").innerText=window.farmCount+"/5";
-  if(window.farmCount>=5) closeMG("SCHWIMMEN");
-}
-
-function closeMG(res){
-  minigame.style.display="none";
-  if(res!=="fail") add(res);
-}
-
-/* BOSS */
-function boss(){
-  minigame.style.display="block";
-
-  let q=0;
-
-  const questions=[
-    {
-      q:"Auf welchen Song spielt Schmyt an?",
-      a1:"Mach kaputt",
-      a2:"Ich wünschte, du wärst verloren",
-      correct:2
-    },
-    {
-      q:"Wer ist ein dreibeiniger Kanalreiniger?",
-      a1:"Tim",
-      a2:"SSIO",
-      correct:2
-    },
-    {
-      q:"Wer hat Maximum Rizz?",
-      a1:"Ski Aggu",
-      a2:"Saria",
-      correct:2
-    }
-  ];
-
-  function renderQ(){
-    const o=questions[q];
-    minigame.innerHTML=`
-      <h2>🎧 DJ BOSS</h2>
-      <p>${o.q}</p>
-      <button onclick="ans(1)">${o.a1}</button>
-      <button onclick="ans(2)">${o.a2}</button>
-    `;
-  }
-
-  window.ans=function(i){
-    if(i===questions[q].correct){
-      q++;
-      if(q>=3){
-        closeMG("OBEN");
-        add("OBEN");
-        end();
-      } else renderQ();
-    } else {
-      renderQ();
-    }
-  }
-
-  renderQ();
-}
-
-/* END */
-function end(){
-  alert("ENTEN SCHWIMMEN AM BESTEN OBEN\nZeige das Passwort dem Hüter des Schatzes");
-}
-
-/* INTERACT */
 function interact(){
 
-  if(near(220,180)){
+  if(near(x,y,320,160)){
     show("Emma:\n\nIch habe meine Sporttasche verloren...");
     return;
   }
 
-  if(near(120,300)){
+  if(near(x,y,200,320)){
     show("Tim:\n\nDubai ist schön, aber Dubai mir Baby ist viel schöner");
     return;
   }
 
-  if(near(300,340)){
+  if(near(x,y,120,200)){
     show("Mattes:\n\nMore Espresso,\nless Depresso");
     return;
   }
 
-  if(near(420,220)){
+  if(near(x,y,520,120)){
     show("Schmyt:\n\nIch zertret grad nur paar Tulpen im Park");
-    return;
-  }
-
-  // MINIGAME TRIGGERS (simple zones)
-  if(x>350 && y<200){
-    openMinigame("mine");
-    return;
-  }
-
-  if(x<200 && y>250){
-    openMinigame("field");
-    return;
-  }
-
-  if(x>350 && y>250){
-    openMinigame("dice");
-    return;
-  }
-
-  if(x>400 && y<120){
-    boss();
     return;
   }
 
   show("Niemand ist hier...");
 }
 
-/* MOVE */
+/* CONTROLS */
 document.addEventListener("keydown",(e)=>{
   if(e.key==="ArrowUp")move(0,-10);
   if(e.key==="ArrowDown")move(0,10);
